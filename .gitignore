@@ -1,0 +1,5 @@
+project/build/**
+**/node_modules/**
+**/package-lock.json
+**/build/**
+**/dist/**
