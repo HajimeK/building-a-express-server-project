@@ -13,7 +13,7 @@ images.get('/', (req, res) => {
 * @param Function functions that processes the 
 * @return NA
 */
-images.get('/getList', function(request, response) {
+images.get('/getImageList', function(request, response) {
     console.log('Page Called' + request.path);
     const fileList = fs.readdirSync('./images', {withFileTypes: true})
         .filter(item => !item.isDirectory())
@@ -24,12 +24,19 @@ images.get('/getList', function(request, response) {
 /**
 * Getting a  list of uploaded images
 * @param '/*' Any requests coming
-* @param Function functions that processes the 
+* @param Function functions that processes the
 * @return NA
 */
-images.get('/getImage', function(request, response) 
+images.get('/getImage', function(request: express.Request,
+                                response: express.Response)
 {
     console.log('image');
+    const width: number = parseInt(request.query.width);
+    const height: number = parseInt(request.query.height);
+
+    console.log('Width = ' + width.toString(width));
+    console.log('Height = ' + height.toString(width));
+
     fs.readFile('./example.png', (err, data) => {
         res.type('png');
         res.send(data);
@@ -45,6 +52,17 @@ images.get('/getImage', function(request, response)
 * @return NA
 */
 images.get('/getThumbnails', function(request, response) {
+    console.log('Page Called' + request.path);
+    response.send("images added");
+});
+
+/**
+* Getting a  list of uploaded images
+* @param '/*' Any requests coming
+* @param Function functions that processes the 
+* @return NA
+*/
+images.post('/uploadImage', function(request, response) {
     console.log('Page Called' + request.path);
     response.send("images added");
 });
