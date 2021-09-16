@@ -1,41 +1,77 @@
 import request from 'supertest';
 import app from '../app';
 
+const req = request(app);
+
 describe('Test Suite for building an express server project', () => {
     // '/getImageList'
-    it('getImageList', async (done) => {
-        await request(app)
-            .get('/getImageList')
-            .expect(200, done.fail)
+    it('Initialize the server. Clear images and thumbnails', async () => {
+        await req
+            .get('/image/clean')
+            .expect(200)
+            .expect ( (response) => {
+                console.log(response.body);
+            });
     });
-    // '/getImage'
-    it('/getImage', async (done) => {
-        await request(app)
-            .get('/getImage')
-            .expect(200, done.fail)
+
+    // '/getImageList'
+    it('Get image list after initial should be 0.', async () => {
+        await req
+            .get('/image/list')
+            .expect(200)
+            .expect ( (response) => {
+                expect(Object.keys(response.body).length).toBe(0);
+            });
     });
+
     // '/uploadImage'
-    it('/uploadImage', async (done) => {
-        await request(app)
-            .post('/uploadImage')
-            .expect(200, done.fail)
+    it('Upload an image', async () => {
+        await req
+            .post('/image/upload')
+            .attach('image', 'original/encenadaport.jpg')
+            .expect(200)
+            .expect ( (response) => {
+                console.log(response.body);
+            });
     });
-    // '/deleteImage'
-    it('/deleteImage', async (done) => {
-        await request(app)
-            .delete('/deleteImage')
-            .expect(200, done.fail)
+
+    // '/getImageList'
+    it('Get image list after the first upload should be 1.', async () => {
+        await req
+            .get('/image/list')
+            .expect(200)
+            .expect ( (response) => {
+                expect(Object.keys(response.body).length).toBe(1);
+            });
     });
-    // '/getThumbnails'
-    it('/getThumbnails', async (done) => {
-        await request(app)
-            .get('/getThumbnails')
-            .expect(200, done.fail)
+
+    // '/getImage with size'
+    it('Getting a file which exists, but not in the cache', async () => {
+        await req
+            .get('/image/get')
+            .query({ image: "encenadaport.jpg", width: 100, height: 100 })
+            .expect(200)
+            .expect ( (response) => {
+                console.log(response.body);
+            });
     });
-    // '/getThumbnail'
-    it('/getThumbnail', async (done) => {
-        await request(app)
-            .get('/getThumbnail')
-            .expect(200, done.fail)
+
+    // '/getImage with the same size'
+    it('Getting a file which exists, also in the cache', async () => {
+        await req
+            .get('/image/get')
+            .query({ image: "encenadaport.jpg", width: 100, height: 100 })
+            .expect(200)
+            .expect ( (response) => {
+                console.log(response.body);
+            });
     });
+
+    it('Getting a file which dows not exist', async () => {
+        await req
+            .get('/image/get')
+            .query({ image: "notexist.jpg", width: 100, height: 100 })
+            .expect(400);
+    });
+
 });

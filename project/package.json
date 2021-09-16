@@ -8,7 +8,7 @@
     "check-types": "tsc --noEmit",
     "lint": "eslint ./src/**/*.ts",
     "prettier": "prettier --config .prettierrc './src/**/*.ts' --write",
-    "jasmine": "jasmin --config=spec/jasmine.json",
+    "jasmine": "jasmine --config=spec/jasmine.json",
     "test": "npm run build & npm run jasmine",
     "dev": "nodemon src/app.ts"
   },
@@ -21,6 +21,8 @@
     "@types/http-errors": "^1.8.1",
     "@types/jasmine": "^3.9.0",
     "@types/morgan": "^1.9.3",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^16.9.1",
     "@types/sharp": "^0.29.1",
     "@types/supertest": "^2.0.11",
     "@typescript-eslint/eslint-plugin": "^4.31.0",
@@ -30,17 +32,22 @@
     "eslint-plugin-prettier": "^3.4.1",
     "jasmine": "^3.9.0",
     "jasmine-spec-reporter": "^7.0.0",
+    "nodemon": "^2.0.12",
     "prettier": "^1.19.1",
     "supertest": "^6.1.6",
+    "ts-node": "^10.2.1",
     "typescript": "^4.4.2"
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "express": "^4.17.1",
     "express-rate-limit": "^5.3.0",
     "fs": "0.0.1-security",
     "helmet": "^4.6.0",
     "http-errors": "^1.8.0",
     "morgan": "^1.10.0",
+    "multer": "^1.4.3",
+    "path": "^0.12.7",
     "sharp": "^0.29.1"
   }
 }

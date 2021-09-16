@@ -1,8 +1,8 @@
-import express, { HttpException, Request, Response, NextFunction } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import createError  from 'http-errors';
-import morgan from 'morgan';
-import helmet from 'helmet';
-import cors from 'cors';
+import morgan from 'morgan'; // log output
+import helmet from 'helmet'; // secure header
+import cors from 'cors'; // Cross-Origine
 import rateLimit from 'express-rate-limit';
 import image from './routes/image/index';
 //import cookieParser from "cookie-parser";
@@ -21,26 +21,25 @@ const corsOptions: cors.CorsOptions = {
 app.use(cors(corsOptions));
 
 // limitter
-const limiter = rateLimit({
+const limitter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 100 // limit each IP to 100 requests per windowMs
 });
-app.use(limiter);
+app.use(limitter);
 
 // router
 app.use('/image', image);
-app.use(function(request: Request,
-                response: Response,
-                next: NextFunction) {
-    next(createError(404));
-});
-app.use(function(error: HttpException,
-                request: Request,
-                response: Response,
-                next: NextFunction) {
-    response.status(error.status || 500);
-    response.send(error);
-});
+// app.use(function(request: Request,
+//                 response: Response,
+//                 next: NextFunction) {
+//     next(createError(404));
+// });
+// app.use(function(error: Error,
+//                 request: Request,
+//                 response: Response) {
+//     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+//     response.send(error);
+// });
 /**
 * all
 * @param '/*' Any requests coming
@@ -50,6 +49,10 @@ app.use(function(error: HttpException,
 app.all('/*', function(request, response, next){
     console.log('Page Called' + request.path);
     next();
+});
+
+app.get('/', (req, res) => {
+    res.send('This is the face page for image handling middleware');
 });
 
 

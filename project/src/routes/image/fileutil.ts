@@ -34,12 +34,12 @@ export function getImageList(dir: string): Promise<imageFileList> {
 
             resolve(dic);
         } catch (error) {
-            reject();
+            reject(error);
         }
     });
 }
 
-export async function clean() {
+export async function clean() : Promise<void> {
     const directoryPathToThumbnails = './thumbnails';
     if (fs.existsSync(directoryPathToThumbnails)) {
         const orgFiles = await getImageList(directoryPathToThumbnails);
@@ -61,11 +61,9 @@ export async function clean() {
     }
     fs.mkdirSync(directoryPathToImages);
 }
-
-async function uploadImage(file: string) {
-    const buffer = fs.createReadStream(file);
+export async function uploadImage(file: string, fileStream: fs.ReadStream) : Promise<void> {
     const sharpData = sharp();
-    buffer.pipe(sharpData);
+    fileStream.pipe(sharpData);
     //console.log(path.sep);
     const pathes = file.split(path.sep);
     const fileName = pathes[pathes.length - 1];
@@ -89,6 +87,7 @@ async function createThumbnail(file: string, width: number, height: number) {
 export async function getImage(fileName:string, width: number, height: number): Promise<fs.ReadStream> {
     const directoryPathToThumbnails = './thumbnails';
     const files = await getImageList(directoryPathToThumbnails);
+
     // file name managed in the systm.
     const fileNameNoExt = fileName.split('.')[0]
     const fileExtend = fileName.split('.')[1];
@@ -113,24 +112,25 @@ export async function getImage(fileName:string, width: number, height: number): 
     });
 }
 
-async function main() : Promise<void> {
-    await clean();
+// async function main() : Promise<void> {
+//     await clean();
 
-    const orgFiles = await getImageList('./original');
-    for (const orgfile in orgFiles) {
-        await uploadImage(orgFiles[orgfile]['fullPath']);
-    }
+//     const orgFiles = await getImageList('./original');
+//     for (const orgfile in orgFiles) {
+//         const fileStream: fs.ReadStream = fs.createReadStream(orgfile);
+//         await uploadImage(orgFiles[orgfile]['fullPath'], fileStream);
+//     }
 
-    const files = await getImageList('./images');
-    console.log(files);
-    for (const file in files) {
-        await createThumbnail(file, 200, 200);
-    }
+//     const files = await getImageList('./images');
+//     console.log(files);
+//     for (const file in files) {
+//         await createThumbnail(file, 200, 200);
+//     }
 
-    const filesForResize = await getImageList('./images');
-    for (const file in filesForResize) {
-        await getImage(file, 100, 100);
-    }
-}
+//     const filesForResize = await getImageList('./images');
+//     for (const file in filesForResize) {
+//         await getImage(file, 100, 100);
+//     }
+// }
 
-void main();
+// void main();

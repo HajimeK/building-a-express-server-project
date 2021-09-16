@@ -3,3 +3,5 @@ project/build/**
 **/package-lock.json
 **/build/**
 **/dist/**
+**/images/**
+**/thumbnails/**
