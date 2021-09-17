@@ -17,9 +17,7 @@ images.use('/thumbnails', express.static('/thumbnails'));
 
 /**
 * Getting a  list of uploaded images
-* @param '/*' Any requests coming
-* @param Function functions that processes the 
-* @return NA
+* @return json format of the image list
 */
 images.get('/list', function(request, response) {
     getImageList('./images')
@@ -33,14 +31,14 @@ images.get('/list', function(request, response) {
 
 /**
 * Getting a  list of uploaded images
-* @param '/*' Any requests coming
-* @param Function functions that processes the
-* @return NA
+* @param image file name stored in the images folder
+* @param width width of the image to get
+* @param height height of the image to get
+* @return the image file resized.
 */
 images.get('/get', function(request: express.Request,
                             response: express.Response)
 {
-    console.log('image');
     const fileName: string = (request.query.image as string);
     const width: number = parseInt(request.query.width as string);
     const height: number = parseInt(request.query.height as string);
@@ -49,7 +47,10 @@ images.get('/get', function(request: express.Request,
     console.log('Height = ' + height.toString());
     getImage(fileName, width, height)
     .then( resolve => {
-        return response.status(200).send(resolve);
+        const fileNameArr = fileName.split('.');
+        const fileExt = fileNameArr[fileNameArr.length - 1];
+        resolve.pipe(response);
+        return response.status(200).type(fileExt); // to work with not only with jpg, but pnd and others
     })
     .catch(error => {
         return response.status(400).send(error);
@@ -69,12 +70,9 @@ const imageUpload = multer({
     ),
 });
 /**
-* Getting a  list of uploaded images
+* Upload an image.
 * curl --location --request POST 'http://localhost:3000/image/upload' \
 * --form 'image=@"<path to the file>/encenadaport.jpg"'
-* @param '/*' Any requests coming
-* @param Function functions that processes the
-* @return NA
 */
 images.post('/upload', imageUpload.single('image'), (request, response) => {
     console.log(request.file);
@@ -82,10 +80,8 @@ images.post('/upload', imageUpload.single('image'), (request, response) => {
 });
 
 /**
-* Getting a  list of uploaded images
-* @param '/*' Any requests coming
-* @param Function functions that processes the 
-* @return NA
+* Delete an image
+* @param image name
 */
 images.delete('/delete', function(request, response) {
     // not implemented
@@ -93,10 +89,7 @@ images.delete('/delete', function(request, response) {
 });
 
 /**
-* Getting a  list of uploaded images
-* @param '/*' Any requests coming
-* @param Function functions that processes the
-* @return NA
+* clean up all the images including cache
 */
 images.get('/clean', function(request, response) {
     clean()

@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "check-types": "tsc --noEmit",
     "lint": "eslint ./src/**/*.ts",
-    "prettier": "prettier --config .prettierrc './src/**/*.ts' --write",
+    "prettier": "prettier --config .prettierrc ./src/**/*.ts --write",
     "jasmine": "jasmine --config=spec/jasmine.json",
     "test": "npm run build & npm run jasmine",
     "dev": "nodemon src/app.ts"

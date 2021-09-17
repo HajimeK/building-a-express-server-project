@@ -105,7 +105,7 @@ export async function getImage(fileName:string, width: number, height: number): 
 
     return new Promise((resolve, reject) => {
         try {
-            resolve(fs.createReadStream(thumbnailAbsolute));
+            resolve(fs.createReadStream(thumbnailAbsolute, { flags: "r+" }));
         } catch (error) {
             reject(error);
         }

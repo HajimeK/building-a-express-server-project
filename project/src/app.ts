@@ -1,11 +1,9 @@
-import express, { Request, Response, NextFunction } from 'express';
-import createError  from 'http-errors';
+import express from 'express';
 import morgan from 'morgan'; // log output
 import helmet from 'helmet'; // secure header
 import cors from 'cors'; // Cross-Origine
 import rateLimit from 'express-rate-limit';
 import image from './routes/image/index';
-//import cookieParser from "cookie-parser";
 
 const app = express()
 const port = 3000
@@ -29,32 +27,22 @@ app.use(limitter);
 
 // router
 app.use('/image', image);
-// app.use(function(request: Request,
-//                 response: Response,
-//                 next: NextFunction) {
-//     next(createError(404));
-// });
-// app.use(function(error: Error,
-//                 request: Request,
-//                 response: Response) {
-//     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-//     response.send(error);
-// });
+
 /**
-* all
+* Describe processes that are common to all the requests here.
 * @param '/*' Any requests coming
-* @param Function functions that processes the
-* @return NA
 */
 app.all('/*', function(request, response, next){
-    console.log('Page Called' + request.path);
+    console.log('IP address' + request.ip);
     next();
 });
 
+/**
+ * Default path for the health check purpose.
+ */
 app.get('/', (req, res) => {
     res.send('This is the face page for image handling middleware');
 });
-
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
