@@ -30,7 +30,7 @@ app.use('/image', image);
 
 /**
 * Describe processes that are common to all the requests here.
-* @param '/*' Any requests coming
+* @param '/*' Any requests coming to this API request
 */
 app.all('/*', function(request, response, next){
     console.log('IP address' + request.ip);

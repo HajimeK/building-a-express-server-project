@@ -39,22 +39,32 @@ images.get('/list', function(request, response) {
 images.get('/get', function(request: express.Request,
                             response: express.Response)
 {
-    const fileName: string = (request.query.image as string);
-    const width: number = parseInt(request.query.width as string);
-    const height: number = parseInt(request.query.height as string);
-    console.log('Getting an image :' + fileName);
-    console.log('Width = ' + width.toString());
-    console.log('Height = ' + height.toString());
-    getImage(fileName, width, height)
-    .then( resolve => {
-        const fileNameArr = fileName.split('.');
-        const fileExt = fileNameArr[fileNameArr.length - 1];
-        resolve.pipe(response);
-        return response.status(200).type(fileExt); // to work with not only with jpg, but pnd and others
-    })
-    .catch(error => {
-        return response.status(400).send(error);
-    });
+    try {
+        const fileName: string = (request.query.image as string);
+        const width: number = parseInt(request.query.width as string);
+        const height: number = parseInt(request.query.height as string);
+        console.log('Getting an image :' + fileName);
+        // Check if the file size is valid or not
+        if (width > 0 && height > 0) {
+            console.log('Width = ' + width.toString());
+            console.log('Height = ' + height.toString());
+        } else {
+            throw new Error("Invalid height/width parameters")
+        }
+
+        getImage(fileName, width, height)
+        .then( resolve => {
+            const fileNameArr = fileName.split('.');
+            const fileExt = fileNameArr[fileNameArr.length - 1];
+            resolve.pipe(response);
+            return response.status(200).type(fileExt); // to work with not only with jpg, but pnd and others
+        })
+        .catch(error => {
+            return response.status(400).send("Invalid original file names. Please check with /image/list to see if the files exists.");
+        });
+    } catch(error) {
+        return response.status(400).send("Invalid height/width parameters");
+    }
 });
 
 const imageUpload = multer({

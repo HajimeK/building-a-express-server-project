@@ -71,7 +71,19 @@ describe('Test Suite for building an express server project', () => {
         await req
             .get('/image/get')
             .query({ image: "notexist.jpg", width: 100, height: 100 })
-            .expect(400);
+            .expect(400)
+            .expect ( (response) => {
+                console.log(response.text);
+            });
+    });
+
+    it('Getting a file with wrong query size', async () => {
+        await req
+            .get('/image/get?image=encenadaport.jpg&width=abc&height=xyz')
+            .expect(400)
+            .expect ( (response) => {
+                console.log(response.text);
+            });
     });
 
 });

@@ -5,7 +5,7 @@ import sharp from 'sharp';
 export interface imageFile {
     fullPath: string;
     size: number;
-    date: string
+    date: number
 }
 
 export interface imageFileList {
@@ -27,8 +27,8 @@ export function getImageList(dir: string): Promise<imageFileList> {
                 if(!stats.isDirectory()){
                     const createdDate = stats.birthtime.getFullYear().toString() + '/'
                     + ('0' + (stats.birthtime.getMonth() + 1).toString()).slice(-2) + '/'
-                    + ('0' + stats.birthtime.getDate().toString()).slice(-2);
-                    dic[file['name']] = {fullPath: full, size: stats.size, date : createdDate };
+                    + ('0' + stats.birthtime.getDay().toString()).slice(-2);
+                    dic[file['name']] = {fullPath: full, size: stats.size, date : Date.now() };
                 }
             });
 
@@ -76,12 +76,16 @@ async function createThumbnail(file: string, width: number, height: number) {
     const fileExtend = file.split('.')[1];
     const thumbnailName: string = './thumbnails/' + fileNameNoExt + width.toString() + 'x' + height.toString() + '.' + fileExtend;
 
-    const buffer = fs.createReadStream(files[file]["fullPath"]);
-    const sharpData = sharp();
-    buffer.pipe(sharpData);
-    await sharpData
-            .resize(width, height)
-            .toFile(thumbnailName );
+    if(file in files) {
+        const buffer = fs.createReadStream(files[file]["fullPath"]);
+        const sharpData = sharp();
+        buffer.pipe(sharpData);
+        await sharpData
+                .resize(width, height)
+                .toFile(thumbnailName );
+    } else {
+        throw new Error("File not found")
+    }
 }
 
 export async function getImage(fileName:string, width: number, height: number): Promise<fs.ReadStream> {
@@ -111,26 +115,3 @@ export async function getImage(fileName:string, width: number, height: number): 
         }
     });
 }
-
-// async function main() : Promise<void> {
-//     await clean();
-
-//     const orgFiles = await getImageList('./original');
-//     for (const orgfile in orgFiles) {
-//         const fileStream: fs.ReadStream = fs.createReadStream(orgfile);
-//         await uploadImage(orgFiles[orgfile]['fullPath'], fileStream);
-//     }
-
-//     const files = await getImageList('./images');
-//     console.log(files);
-//     for (const file in files) {
-//         await createThumbnail(file, 200, 200);
-//     }
-
-//     const filesForResize = await getImageList('./images');
-//     for (const file in filesForResize) {
-//         await getImage(file, 100, 100);
-//     }
-// }
-
-// void main();
